@@ -1,0 +1,76 @@
+{
+  "params": {
+    "engine": "Valhalla auto isochrone",
+    "grid_mi": 0.3,
+    "min_spacing_mi": 1.6,
+    "demand": "max(block-group pop density / median, GP2050 placetype intensity)"
+  },
+  "counts": {
+    "existing": 22,
+    "committed": 2,
+    "bond2028": 2,
+    "buildout": 4,
+    "mutual_aid": 30,
+    "county_islands": 15
+  },
+  "avg_efficiency": {
+    "mesa": 78,
+    "aid": 83
+  },
+  "funded_compare": {
+    "area4_mesa": 51.6,
+    "area4_aid": 52.8
+  },
+  "mutual_aid_only": {
+    "area4": 1.3,
+    "dem4": 1.3
+  },
+  "strategies": {
+    "mesa": {
+      "funded": {
+        "area4": 51.6,
+        "area8": 91.2,
+        "dem4": 56.0,
+        "dem8": 92.1
+      },
+      "bond2028": {
+        "area4": 54.9,
+        "area8": 91.2,
+        "dem4": 59.9,
+        "dem8": 92.1
+      },
+      "buildout": {
+        "area4": 58.4,
+        "area8": 91.7,
+        "dem4": 63.7,
+        "dem8": 92.6
+      }
+    },
+    "aid": {
+      "funded": {
+        "area4": 52.8,
+        "area8": 93.2,
+        "dem4": 57.1,
+        "dem8": 93.6
+      },
+      "bond2028": {
+        "area4": 56.2,
+        "area8": 93.2,
+        "dem4": 61.0,
+        "dem8": 93.6
+      },
+      "buildout": {
+        "area4": 60.0,
+        "area8": 93.8,
+        "dem4": 64.6,
+        "dem8": 94.1
+      }
+    }
+  },
+  "total_demand": 2620.8,
+  "area_cells": 1569,
+  "median_density": 2869.0,
+  "gap_cells": 760,
+  "n_blockgroups_mesa": 285,
+  "n_developments": 13
+}

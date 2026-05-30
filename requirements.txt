@@ -1,0 +1,3 @@
+# Python deps for the analysis scripts (the web app itself needs nothing to build).
+requests>=2.31
+shapely>=2.0

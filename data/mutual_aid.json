@@ -1,0 +1,212 @@
+[
+  {
+    "name": "Apache Junction Fire Station",
+    "jurisdiction": "Apache Junction",
+    "lat": 33.400103,
+    "lon": -111.545534,
+    "id": "aid0"
+  },
+  {
+    "name": "Chandler Fire Department Station No. 2",
+    "jurisdiction": "Chandler",
+    "lat": 33.332803,
+    "lon": -111.858591,
+    "id": "aid1"
+  },
+  {
+    "name": "Chandler Fire Health & Medical Station 6",
+    "jurisdiction": "Chandler",
+    "lat": 33.319569,
+    "lon": -111.827842,
+    "id": "aid2"
+  },
+  {
+    "name": "Gilbert Fire & Rescue Station 10",
+    "jurisdiction": "Gilbert",
+    "lat": 33.364978,
+    "lon": -111.818622,
+    "id": "aid3"
+  },
+  {
+    "name": "Gilbert Fire & Rescue Station 251",
+    "jurisdiction": "Gilbert",
+    "lat": 33.30762,
+    "lon": -111.731333,
+    "id": "aid4"
+  },
+  {
+    "name": "Gilbert Fire & Rescue Station 252",
+    "jurisdiction": "Gilbert",
+    "lat": 33.364281,
+    "lon": -111.727874,
+    "id": "aid5"
+  },
+  {
+    "name": "Gilbert Fire & Rescue Station 255",
+    "jurisdiction": "Gilbert",
+    "lat": 33.278278,
+    "lon": -111.709433,
+    "id": "aid6"
+  },
+  {
+    "name": "Gilbert Fire & Rescue Station 256",
+    "jurisdiction": "Gilbert",
+    "lat": 33.33528,
+    "lon": -111.712197,
+    "id": "aid7"
+  },
+  {
+    "name": "Gilbert Fire & Rescue Station 257",
+    "jurisdiction": "Gilbert",
+    "lat": 33.354193,
+    "lon": -111.806207,
+    "id": "aid8"
+  },
+  {
+    "name": "Gilbert Fire & Rescue Station 3",
+    "jurisdiction": "Gilbert",
+    "lat": 33.364133,
+    "lon": -111.769283,
+    "id": "aid9"
+  },
+  {
+    "name": "Gilbert Fire & Rescue Station 9",
+    "jurisdiction": "Gilbert",
+    "lat": 33.247979,
+    "lon": -111.717343,
+    "id": "aid10"
+  },
+  {
+    "name": "Gilbert Fire Department Station No. 7",
+    "jurisdiction": "Gilbert",
+    "lat": 33.334909,
+    "lon": -111.803075,
+    "id": "aid11"
+  },
+  {
+    "name": "Town of Gilbert Fire Administration",
+    "jurisdiction": "Gilbert",
+    "lat": 33.329633,
+    "lon": -111.787765,
+    "id": "aid12"
+  },
+  {
+    "name": "Other Fire Station",
+    "jurisdiction": "Other",
+    "lat": 33.422043,
+    "lon": -111.55864,
+    "id": "aid13"
+  },
+  {
+    "name": "Other Fire Station",
+    "jurisdiction": "Other",
+    "lat": 33.494716,
+    "lon": -111.831534,
+    "id": "aid14"
+  },
+  {
+    "name": "Other Fire Station",
+    "jurisdiction": "Other",
+    "lat": 33.474309,
+    "lon": -111.80537,
+    "id": "aid15"
+  },
+  {
+    "name": "Queen Creek Fire Department - Station 1",
+    "jurisdiction": "Queen Creek",
+    "lat": 33.244721,
+    "lon": -111.637073,
+    "id": "aid16"
+  },
+  {
+    "name": "Queen Creek Fire Station 3",
+    "jurisdiction": "Queen Creek",
+    "lat": 33.263825,
+    "lon": -111.670519,
+    "id": "aid17"
+  },
+  {
+    "name": "Queen Creek Fire Station 4",
+    "jurisdiction": "Queen Creek",
+    "lat": 33.26513,
+    "lon": -111.599307,
+    "id": "aid18"
+  },
+  {
+    "name": "Rural Metro Fire Station 859",
+    "jurisdiction": "Rural Metro",
+    "lat": 33.422629,
+    "lon": -111.606442,
+    "id": "aid19"
+  },
+  {
+    "name": "Salt River Fire Station 291",
+    "jurisdiction": "Salt River (SRPMIC)",
+    "lat": 33.48726,
+    "lon": -111.862011,
+    "id": "aid20"
+  },
+  {
+    "name": "Salt River Fire Station 292",
+    "jurisdiction": "Salt River (SRPMIC)",
+    "lat": 33.47444,
+    "lon": -111.805316,
+    "id": "aid21"
+  },
+  {
+    "name": "Salt River Fire Station 294",
+    "jurisdiction": "Salt River (SRPMIC)",
+    "lat": 33.494654,
+    "lon": -111.83159,
+    "id": "aid22"
+  },
+  {
+    "name": "Scottsdale Fire Station Number 1",
+    "jurisdiction": "Scottsdale",
+    "lat": 33.46833,
+    "lon": -111.917165,
+    "id": "aid23"
+  },
+  {
+    "name": "Tempe Fire Department Station #3",
+    "jurisdiction": "Tempe",
+    "lat": 33.375042,
+    "lon": -111.910984,
+    "id": "aid24"
+  },
+  {
+    "name": "Tempe Fire Department Station No. 1",
+    "jurisdiction": "Tempe",
+    "lat": 33.415168,
+    "lon": -111.913719,
+    "id": "aid25"
+  },
+  {
+    "name": "Tempe Fire Department Station No. 5",
+    "jurisdiction": "Tempe",
+    "lat": 33.439883,
+    "lon": -111.928307,
+    "id": "aid26"
+  },
+  {
+    "name": "Tempe Fire Station",
+    "jurisdiction": "Tempe",
+    "lat": 33.349604,
+    "lon": -111.933089,
+    "id": "aid27"
+  },
+  {
+    "name": "Tempe Fire Station #7",
+    "jurisdiction": "Tempe",
+    "lat": 33.336505,
+    "lon": -111.910653,
+    "id": "aid28"
+  },
+  {
+    "name": "Tempe Fire Station 6",
+    "jurisdiction": "Tempe",
+    "lat": 33.42364,
+    "lon": -111.942427,
+    "id": "aid29"
+  }
+]

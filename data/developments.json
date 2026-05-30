@@ -1,0 +1,15 @@
+[
+  {"name":"Eastmark","type":"Residential","status":"Building out","magnitude":"~15,000 homes at buildout","lat":33.3185,"lon":-111.6355,"note":"DMB/Brookfield master-planned community; the anchor of SE Mesa residential growth."},
+  {"name":"Cadence at Gateway","type":"Residential","status":"Building out","magnitude":"3,500+ homes on 465 ac","lat":33.3055,"lon":-111.6185,"note":"Master-planned community straddling the SR-24 corridor."},
+  {"name":"Hawes Crossing","type":"Residential","status":"Building out","magnitude":"~3,000 homes","lat":33.3150,"lon":-111.6620,"note":"Large residential community near Hawes & Pecos."},
+  {"name":"Elliot Road Technology Corridor","type":"Employment","status":"Active / planned","magnitude":"Data centers + advanced mfg","lat":33.3500,"lon":-111.6200,"note":"PAD zone (Hawes→Signal Butte, N of Gateway) streamlining light-industrial/tech."},
+  {"name":"Google Data Center","type":"Employment","status":"Under construction","magnitude":"$1B+, ~750K SF at buildout","lat":33.3490,"lon":-111.6020,"note":"Phased data-center campus in SE Mesa."},
+  {"name":"Eastmark Center of Industry","type":"Industrial","status":"Under construction","magnitude":"~1.6M SF","lat":33.3380,"lon":-111.6360,"note":"Large industrial park within Eastmark."},
+  {"name":"The Cubes at Mesa Gateway","type":"Industrial","status":"Built / leasing","magnitude":"~4M SF on 268 ac","lat":33.2955,"lon":-111.6320,"note":"Largest master-planned industrial park in the Southeast Valley."},
+  {"name":"Gateway East (Boyer)","type":"Industrial","status":"Building out","magnitude":"273-ac business park","lat":33.3000,"lon":-111.6010,"note":"Advanced manufacturing incl. XNRGY; 900+ jobs at full buildout."},
+  {"name":"Phoenix-Mesa Gateway Airport","type":"Employment / Aviation","status":"Expanding","magnitude":"Regional airport + employment core","lat":33.3080,"lon":-111.6555,"note":"Aviation, logistics, and surrounding employment growth."},
+  {"name":"Longbow / Falcon District","type":"Employment","status":"Active","magnitude":"Employment near Falcon Field","lat":33.4580,"lon":-111.7280,"note":"NE Mesa employment around Falcon Field Airport."},
+  {"name":"Mesa City Center / ASU at Mesa","type":"Mixed-use / Civic","status":"Redeveloping","magnitude":"Downtown infill + university","lat":33.4150,"lon":-111.8320,"note":"Downtown redevelopment, ASU campus, and higher-density infill."},
+  {"name":"Riverview / The Pivot","type":"Commercial / Mixed","status":"Active","magnitude":"Regional retail + employment","lat":33.4350,"lon":-111.8800,"note":"NW Mesa commercial district near Loop 101/202 and Sloan Park."},
+  {"name":"Destination at Gateway","type":"Mixed-use","status":"Planned","magnitude":"Mixed-use employment/retail","lat":33.3450,"lon":-111.6385,"note":"Planned mixed-use node supporting the Gateway/Elliot corridor."}
+]
