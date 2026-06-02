@@ -22,7 +22,7 @@ const VALHALLA="https://valhalla1.openstreetmap.de/isochrone",
 const SPEED_FACTOR=1.0;
 
 const state={phase:"funded",strategy:"mesa",base:"map",band4:true,band8:false,gaps:false,mutual:false,
-  dev:false,pop:false,islands:true,edit:false,warnBuilt:true,adding:false};
+  dev:false,pop:false,islands:true,edit:false,warnBuilt:true,adding:false,buildoutN:4};
 const EAST_VALLEY=L.latLngBounds([33.12,-112.12],[33.68,-111.38]);  // Phoenix East Valley
 const CELL_SQMI=0.09;  // ~0.3mi grid cell area
 
@@ -38,6 +38,7 @@ let grp={},BASE_MAP,BASE_SAT;
       j("data/blockgroups_mesa.geojson"),j("data/county_islands.geojson"),j("data/demand_grid.json")]);
     DATA={stations,coverage,gaps,boundary,metrics,mutual,developments,blockgroups,islands};
     GRID=grid.cells;TOTAL=grid.total;NC=grid.ncells;
+    state.buildoutN=(metrics.strategies[state.strategy].buildout_default)||4;
   }catch(err){document.body.innerHTML=`<div style="padding:30px;font-family:sans-serif">Could not load data.<br>
     Run <code>python -m http.server</code> in this folder, open <code>http://localhost:8000</code>.<br><br><small>${err}</small></div>`;throw err;}
   indexCoverage(); buildMap(); buildLive(); buildStaticLayers(); buildPanels(); wireUI(); refresh();
@@ -88,10 +89,17 @@ function buildLive(){LIVE=[];userSeq=0;
     const g4=COV[`${s.id}|${key}|4min`],g8=COV[`${s.id}|${key}|8min`];
     if(g4&&g8)LIVE.push(mkLive(s,g4,g8));
   }}
-function visibleLive(){return LIVE.filter(s=>s.status==="user"||PHASES[state.phase].includes(s.status));}
+function buildoutStations(){return LIVE.filter(s=>s.status==="proposed-buildout").sort((a,b)=>(a.priority||99)-(b.priority||99));}
+function visibleLive(){
+  const vs=LIVE.filter(s=>s.status==="user"||PHASES[state.phase].includes(s.status));
+  if(state.phase!=="buildout")return vs;            // buildout count only applies in buildout phase
+  const keep=new Set(buildoutStations().slice(0,state.buildoutN));
+  return vs.filter(s=>s.status!=="proposed-buildout"||keep.has(s));
+}
 function liveMetrics(){const vs=visibleLive();let p4=vs.map(s=>s.parts4),p8=vs.map(s=>s.parts8);
   if(state.strategy==="aid"){p4=p4.concat(MA4);p8=p8.concat(MA8);}
-  return{a4:pct(maskUnion(p4)).area,a8:pct(maskUnion(p8)).area,n:vs.length};}
+  const m4=pct(maskUnion(p4)),m8=pct(maskUnion(p8));
+  return{a4:m4.area,a8:m8.area,d4:m4.dem,d8:m8.dem,n:vs.length};}
 
 /* ---------- map ---------- */
 function buildMap(){
@@ -238,12 +246,20 @@ function removeStation(s){
 function resetPlan(){buildLive();rebuild();updateLive();toast("Reset to the optimized model");}
 
 /* ---------- live readout + refresh ---------- */
+function phaseBaseline(){  // the optimized-model coverage to measure user edits against
+  const S=DATA.metrics.strategies[state.strategy];
+  if(state.phase==="buildout"&&S.buildout_seq){const seq=S.buildout_seq;return seq[Math.min(state.buildoutN,seq.length-1)];}
+  return S[state.phase];
+}
 function updateLive(){
-  const lm=liveMetrics(),base=DATA.metrics.strategies[state.strategy][state.phase];
+  const lm=liveMetrics(),base=phaseBaseline();
   const d4=lm.a4-base.area4,d8=lm.a8-base.area8;
   const fmt=d=>Math.abs(d)<0.05?"":` <span class="delta ${d>=0?'up':'down'}">${d>=0?'▲':'▼'}${Math.abs(d).toFixed(1)}</span>`;
   document.getElementById("live4").innerHTML=lm.a4.toFixed(1)+"%"+fmt(d4);
   document.getElementById("live8").innerHTML=lm.a8.toFixed(1)+"%"+fmt(d8);
+  const e4d=document.getElementById("live4d"),e8d=document.getElementById("live8d");
+  if(e4d)e4d.textContent=lm.d4.toFixed(1)+"%";
+  if(e8d)e8d.textContent=lm.d8.toFixed(1)+"%";
   document.getElementById("liveN").textContent=lm.n;
   renderOverview(lm);
 }
@@ -295,6 +311,19 @@ function renderHelp(){
       station's efficiency (e.g. “39% serves Mesa”) for transparency, but we don't reject it for it — rejecting it would
       mean covering fewer Mesa residents. A truly wasteful corner site is avoided automatically because it would cover little
       Mesa demand in the first place.`],
+    ["“Area covered” vs “demand covered” — why two numbers?",
+     `<b>Area %</b> is the share of serviceable Mesa <i>land</i> within a 4-min drive. <b>Demand %</b> is the share of
+      <i>population + planned land-use intensity</i> within reach — and it's what the siting model actually maximizes. They
+      differ (e.g. buildout ≈ <b>58% area but ≈ 64% demand</b>) because the land still outside 4 minutes is mostly low-demand
+      edge and greenfield. So coverage <i>feels</i> larger than the area % because most <b>people</b> are covered. The map
+      also paints isochrone that spills outside Mesa (into Gilbert, the county islands, the river/airport) — that ground is
+      shown but <i>not</i> counted, which makes the painted blue look bigger than the counted %.`],
+    ["Why does buildout stop at 6 stations — and can I see more?",
+     `The “Full Buildout” default is a <b>chosen count</b> (the 2028 pair + 4), not a hard ceiling. Use the <b>Buildout</b>
+      stepper (next to the phase buttons, in Full Buildout view) to add or remove forecast stations — coverage updates live.
+      Each station is still placed by the model at its <b>most empirically valuable</b> remaining site (maximizing Mesa demand
+      at ≥1.6 mi spacing); the sequence naturally yields less new coverage per station, so the curve flattens. The model only
+      forecasts sites that clear a minimum demand threshold, so it won't invent wasteful stations.`],
     ["How does the live editor recompute coverage?",
      `When you drag or add a station it's snapped to the road network (OSRM) and a fresh Valhalla isochrone is fetched;
       your browser then re-tests every demand-grid cell against the new coverage. The math is identical to the offline
@@ -320,9 +349,11 @@ function renderHelp(){
 }
 function renderOverview(lm){
   const m=DATA.metrics,pane=document.querySelector('[data-pane="overview"]');
-  const S=m.strategies[state.strategy],base=S.funded;
+  const S=m.strategies[state.strategy],base=S.funded,base0=S.funded;
+  const buCov=(S.buildout_seq&&S.buildout_seq[Math.min(state.buildoutN,S.buildout_seq.length-1)])||S.buildout;
   lm=lm||liveMetrics();
-  const phaseLabel={funded:"Current (22 + funded 223/224)",bond2028:"+ 2028 bond (225 & 226)",buildout:"Full buildout (+227–230)"}[state.phase];
+  const phaseLabel={funded:"Current (22 + funded 223/224)",bond2028:"+ 2028 bond (225 & 226)",
+    buildout:`Full buildout (+${state.buildoutN} station${state.buildoutN===1?"":"s"}: 227–${226+state.buildoutN})`}[state.phase];
   pane.innerHTML=`
     <p class="lead">Where Mesa's next stations should go — on a <b>real street-network 4-minute drive</b> (NFPA 1710),
     with demand from the <b>City's own data</b> (block-group population + General Plan 2050 land use). Default lens is
@@ -330,15 +361,20 @@ function renderOverview(lm){
     coverage update live.</p>
     <div style="font-size:12px;color:#5b6675;margin-bottom:9px">Lens: <b>${state.strategy==="mesa"?"Mesa only":"Counting mutual aid"}</b> · Showing: <b>${phaseLabel}</b></div>
     <div class="metric-row">
-      <div class="metric"><div class="big">${lm.a4.toFixed(1)}%</div><div class="lbl">City area within a 4-min engine drive (live)</div>
-        ${state.phase!=="funded"?`<div class="delta up">▲ ${(lm.a4-base.area4).toFixed(1)} pts vs today</div>`:""}</div>
-      <div class="metric"><div class="big">${lm.a8.toFixed(1)}%</div><div class="lbl">City area within an 8-min full alarm (live)</div>
-        ${state.phase!=="funded"?`<div class="delta up">▲ ${(lm.a8-base.area8).toFixed(1)} pts vs today</div>`:""}</div>
+      <div class="metric"><div class="big">${lm.a4.toFixed(1)}%</div><div class="lbl">of city <b>area</b> within a 4-min engine drive (live)</div>
+        <div class="subm"><b>${lm.d4.toFixed(1)}%</b> of <b>demand</b> (people + planned intensity)</div>
+        ${state.phase!=="funded"?`<div class="delta up">▲ ${(lm.a4-base.area4).toFixed(1)} pts area vs today</div>`:""}</div>
+      <div class="metric"><div class="big">${lm.a8.toFixed(1)}%</div><div class="lbl">of city <b>area</b> within an 8-min full alarm (live)</div>
+        <div class="subm"><b>${lm.d8.toFixed(1)}%</b> of <b>demand</b> reached</div>
+        ${state.phase!=="funded"?`<div class="delta up">▲ ${(lm.a8-base.area8).toFixed(1)} pts area vs today</div>`:""}</div>
     </div>
+    <p class="lead" style="margin:0 0 6px;font-size:12.5px;color:#5b6675"><b>Area</b> = share of serviceable Mesa land in reach.
+    <b>Demand</b> = share of population + planned land-use intensity in reach (what the siting model optimizes). They differ
+    because remaining uncovered land is mostly low-demand edge/greenfield.</p>
     <h2 class="sec">Optimized model — 4-min coverage by phase</h2>
-    ${bar("Current (incl. 223/224)",base.area4)}
-    ${bar("+ 2028 bond (225, 226)",S.bond2028.area4)}
-    ${bar("+ Buildout (227–230)",S.buildout.area4)}
+    ${bar("Current (incl. 223/224)",base0.area4,base0.dem4)}
+    ${bar("+ 2028 bond (225, 226)",S.bond2028.area4,S.bond2028.dem4)}
+    ${bar(`+ Buildout (${state.buildoutN} station${state.buildoutN===1?"":"s"}: 227–${226+state.buildoutN})`,buCov.area4,buCov.dem4)}
     <h2 class="sec">Optimized for Mesa coverage</h2>
     <p class="lead" style="margin-top:0">Sites are chosen to <b>maximize the Mesa demand reached within 4 minutes</b>
     (greedy Maximal Covering Location). <b>Coverage efficiency</b> — the share of a station's reach on Mesa-served ground —
@@ -359,11 +395,13 @@ function renderOverview(lm){
     <p class="lead" style="font-size:11.5px;color:#9aa6b5;margin-top:14px">Independent planning model — not an official Mesa FMD
     document. Funded 223/224 reflect city plans; 225–230 are analytical forecasts. Tap <b>？ Help</b> for the FAQ &amp; methodology.</p>`;
 }
-function bar(label,val){return `<div style="margin:9px 0"><div style="display:flex;justify-content:space-between;font-size:12.5px;font-weight:700">
-  <span>${label}</span><span>${val}%</span></div><div class="bar"><i style="width:${val}%;background:linear-gradient(90deg,#0ea5e9,#7c3aed)"></i></div></div>`;}
+function bar(label,val,dem){return `<div style="margin:9px 0"><div style="display:flex;justify-content:space-between;font-size:12.5px;font-weight:700;gap:8px">
+  <span>${label}</span><span style="white-space:nowrap">${val}% area${dem!=null?` · <span style="color:#7c3aed">${dem}% demand</span>`:""}</span></div>
+  <div class="bar"><i style="width:${val}%;background:linear-gradient(90deg,#0ea5e9,#7c3aed)"></i></div></div>`;}
 function renderStations(){
   const pane=document.querySelector('[data-pane="stations"]');
-  const g=(t,st)=>{const list=DATA.stations.filter(s=>s.status===st&&(st.startsWith("proposed")?s.strategy===state.strategy:true));
+  const g=(t,st)=>{let list=DATA.stations.filter(s=>s.status===st&&(st.startsWith("proposed")?s.strategy===state.strategy:true));
+    if(st==="proposed-buildout")list=list.sort((x,y)=>x.priority-y.priority).slice(0,state.buildoutN);
     if(!list.length)return"";const cls=STATUS_CLS[st];
     return `<h2 class="sec">${t} (${list.length})</h2>`+list.map(s=>{
       const pill=st==="committed"?'<span class="pill co">Funded</span>':st==="proposed-2028"?'<span class="pill p28">2028</span>':st==="proposed-buildout"?'<span class="pill bu">Forecast</span>':'';
@@ -381,7 +419,7 @@ function renderWhy(){
   const pane=document.querySelector('[data-pane="why"]');
   const f=DATA.stations.filter(s=>s.status==="committed");
   const b=DATA.stations.filter(s=>s.status==="proposed-2028"&&s.strategy===state.strategy).sort((x,y)=>x.priority-y.priority);
-  const bo=DATA.stations.filter(s=>s.status==="proposed-buildout"&&s.strategy===state.strategy).sort((x,y)=>x.priority-y.priority);
+  const bo=DATA.stations.filter(s=>s.status==="proposed-buildout"&&s.strategy===state.strategy).sort((x,y)=>x.priority-y.priority).slice(0,state.buildoutN);
   const clean=a=>a.replace('~ ','').replace(', Mesa, AZ (analytical site)','');
   let html=`<p class="lead">Recommendations for the <b>${state.strategy==="mesa"?"Mesa-only":"+ mutual aid"}</b> lens — a greedy
    <b>Maximal Covering Location</b> model that <b>maximizes Mesa demand reached within 4 minutes</b> at ≥1.6 mi spacing. Coverage
@@ -406,9 +444,25 @@ function focusStation(id){const s=DATA.stations.find(x=>x.id===id&&(x.strategy==
   if(window.matchMedia("(max-width:759px)").matches)collapsePanel(true);}
 
 /* ---------- state changes ---------- */
-function setPhase(p){state.phase=p;syncBtns();refresh();}
+function setPhase(p){state.phase=p;syncBtns();syncBuildout();refresh();}
+function buildoutMax(){return (DATA.metrics.strategies[state.strategy].buildout_max)||state.buildoutN;}
+function setBuildoutN(n){
+  state.buildoutN=Math.max(0,Math.min(buildoutMax(),n));
+  syncBuildout();rebuild();updateLive();renderStations();renderWhy();
+}
+function syncBuildout(){  // stepper visibility + readouts + dynamic phase subtitle
+  const wrap=document.getElementById("buildoutStepper");
+  if(wrap)wrap.classList.toggle("hidden",state.phase!=="buildout");
+  const c=document.getElementById("buildoutCount");if(c)c.textContent=state.buildoutN;
+  const minus=document.getElementById("buildoutMinus"),plus=document.getElementById("buildoutPlus");
+  if(minus)minus.disabled=state.buildoutN<=0;
+  if(plus)plus.disabled=state.buildoutN>=buildoutMax();
+  const sub=document.querySelector('.phase[data-phase="buildout"] small');
+  if(sub)sub.textContent=state.buildoutN>=1?`+227–${226+state.buildoutN}`:"2028 only";
+}
 function setStrategy(s){state.strategy=s;state.mutual=(s==="aid");  // lens drives sister-station visibility
-  buildLive();syncBtns();refresh();renderStations();renderWhy();}
+  state.buildoutN=Math.min(state.buildoutN,buildoutMax());
+  buildLive();syncBtns();syncBuildout();refresh();renderStations();renderWhy();}
 function setBase(b){state.base=b;
   if(b==="sat"){MAP.removeLayer(BASE_MAP);BASE_SAT.addTo(MAP);}else{MAP.removeLayer(BASE_SAT);BASE_MAP.addTo(MAP);}
   BASE_MAP.bringToBack&&BASE_MAP.bringToBack();BASE_SAT.bringToBack&&BASE_SAT.bringToBack();syncBtns();}
@@ -427,6 +481,10 @@ function setEdit(on){state.edit=on;state.adding=false;
 function wireUI(){
   document.querySelectorAll(".phase").forEach(b=>b.addEventListener("click",()=>setPhase(b.dataset.phase)));
   document.querySelectorAll(".lensbtn").forEach(b=>b.addEventListener("click",()=>setStrategy(b.dataset.strat)));
+  const bMinus=document.getElementById("buildoutMinus"),bPlus=document.getElementById("buildoutPlus");
+  if(bMinus)bMinus.addEventListener("click",()=>setBuildoutN(state.buildoutN-1));
+  if(bPlus)bPlus.addEventListener("click",()=>setBuildoutN(state.buildoutN+1));
+  syncBuildout();
   document.querySelectorAll("#baseSeg .segbtn").forEach(b=>b.addEventListener("click",()=>setBase(b.dataset.base)));
   const onlyLayers=()=>applyLayers();
   const chk=(id,k)=>document.getElementById(id).addEventListener("change",e=>{state[k]=e.target.checked;onlyLayers();});

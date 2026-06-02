@@ -43,6 +43,13 @@
       <button class="lensbtn active" data-strat="mesa">Mesa only</button>
       <button class="lensbtn" data-strat="aid">+ Mutual aid</button>
     </div>
+    <div id="buildoutStepper" class="hidden" role="group" aria-label="Buildout station count">
+      <span class="lens-lbl">Buildout</span>
+      <button class="bs-btn" id="buildoutMinus" aria-label="Fewer buildout stations">−</button>
+      <b id="buildoutCount">4</b>
+      <button class="bs-btn" id="buildoutPlus" aria-label="More buildout stations">+</button>
+      <span class="bs-sub">stations · live</span>
+    </div>
   </div>
 
   <!-- Layers: FAB + collapsible panel -->
@@ -66,8 +73,8 @@
   <!-- Edit toolbar (hidden until Edit mode) -->
   <div id="editBar" class="hidden" aria-label="Edit stations">
     <div class="live-readout">
-      <div class="rd"><b id="live4">–</b><span>4-min coverage</span></div>
-      <div class="rd"><b id="live8">–</b><span>8-min coverage</span></div>
+      <div class="rd"><b id="live4">–</b><span>4-min area</span><i id="live4d">–</i></div>
+      <div class="rd"><b id="live8">–</b><span>8-min area</span><i id="live8d">–</i></div>
       <div class="rd"><b id="liveN">–</b><span>stations shown</span></div>
     </div>
     <div class="edit-actions">

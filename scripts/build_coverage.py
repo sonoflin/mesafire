@@ -23,6 +23,11 @@ def P(*a): return os.path.join(HERE, *a)
 
 # ---- parameters ----
 GRID_MI=0.30; MIN_SPACING_MI=1.60; N_2028=2; N_BUILDOUT=4
+# N_BUILDOUT is the DEFAULT buildout size (the "Full Buildout" phase = 2028 pair + 4 = 6 total).
+# We actually COMPUTE up to N_BUILDOUT_MAX buildout stations so the in-app stepper can reveal
+# more if the city has appetite/funding — the greedy still stops early once a pick adds less
+# than BENEFIT_FLOOR of total demand, so we never invent low-value stations.
+N_BUILDOUT_MAX=8
 BENEFIT_FLOOR=0.004; MAX_CANDIDATES=55; DENS_CAP=3.0   # stop buildout below 0.4% of TOTAL demand
 EFF_TIEBREAK=0.15   # objective = Mesa demand covered, with a light (<=15%) efficiency tie-break
 PLACETYPE_W={
@@ -230,7 +235,7 @@ def main():
             SEED[j]={"lat":la,"lon":lo,"4":p4,"g4":g["4"],"g8":g["8"],"eff":efficiency(p4)}
         remaining=sum(c[2] for c,x in zip(cells,covered) if not x)
         chosen=[];placed=[{"lat":s["lat"],"lon":s["lon"]} for s in stations]
-        for pick in range(N_2028+N_BUILDOUT):
+        for pick in range(N_2028+N_BUILDOUT_MAX):
             best=None  # (score, benefit, j, idxs)
             for j,sd in SEED.items():
                 if any(c["seed"]==j for c in chosen): continue
@@ -328,13 +333,18 @@ def main():
         return {"area4":area_pct(m4),"area8":area_pct(m8),"dem4":dem_pct(m4),"dem8":dem_pct(m8)}
     def strat_metrics(newset,strat):
         b=[s["id"] for s in newset if s["status"]=="proposed-2028"]
-        bu=[s["id"] for s in newset if s["status"]=="proposed-buildout"]
-        return {"funded":phase([],strat),"bond2028":phase(b,strat),"buildout":phase(b+bu,strat)}
+        bu=[s["id"] for s in sorted(newset,key=lambda s:s["priority"]) if s["status"]=="proposed-buildout"]
+        # cumulative coverage as each buildout station is added (k = number of buildout stations,
+        # k=0 == just the 2028 pair). Lets the in-app stepper show exact numbers per count live.
+        seq=[phase(b+bu[:k],strat) for k in range(len(bu)+1)]
+        return {"funded":phase([],strat),"bond2028":phase(b,strat),
+                "buildout":phase(b+bu[:N_BUILDOUT],strat),       # default 6-station view
+                "buildout_seq":seq,"buildout_default":N_BUILDOUT,"buildout_max":len(bu)}
     metrics={
         "params":{"engine":"Valhalla auto isochrone","grid_mi":GRID_MI,"min_spacing_mi":MIN_SPACING_MI,
                   "demand":"max(block-group pop density / median, GP2050 placetype intensity)"},
-        "counts":{"existing":len(ex),"committed":len(com),"bond2028":N_2028,"buildout":len(mesa)-N_2028,
-                  "mutual_aid":len(aid),"county_islands":len(islands)},
+        "counts":{"existing":len(ex),"committed":len(com),"bond2028":N_2028,"buildout":N_BUILDOUT,
+                  "buildout_max":len(mesa)-N_2028,"mutual_aid":len(aid),"county_islands":len(islands)},
         "avg_efficiency":{"mesa":round(sum(s["efficiency_pct"] for s in mesa)/max(1,len(mesa))),
                           "aid":round(sum(s["efficiency_pct"] for s in aidstrat)/max(1,len(aidstrat)))},
         "funded_compare":{"area4_mesa":area_pct(fund4),"area4_aid":area_pct(fund4a)},

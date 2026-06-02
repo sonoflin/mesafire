@@ -10,12 +10,13 @@
     "committed": 2,
     "bond2028": 2,
     "buildout": 4,
+    "buildout_max": 8,
     "mutual_aid": 30,
     "county_islands": 15
   },
   "avg_efficiency": {
-    "mesa": 78,
-    "aid": 83
+    "mesa": 77,
+    "aid": 80
   },
   "funded_compare": {
     "area4_mesa": 51.6,
@@ -44,7 +45,65 @@
         "area8": 91.7,
         "dem4": 63.7,
         "dem8": 92.6
-      }
+      },
+      "buildout_seq": [
+        {
+          "area4": 54.9,
+          "area8": 91.2,
+          "dem4": 59.9,
+          "dem8": 92.1
+        },
+        {
+          "area4": 55.9,
+          "area8": 91.5,
+          "dem4": 61.0,
+          "dem8": 92.4
+        },
+        {
+          "area4": 57.0,
+          "area8": 91.7,
+          "dem4": 62.1,
+          "dem8": 92.6
+        },
+        {
+          "area4": 57.7,
+          "area8": 91.7,
+          "dem4": 62.9,
+          "dem8": 92.6
+        },
+        {
+          "area4": 58.4,
+          "area8": 91.7,
+          "dem4": 63.7,
+          "dem8": 92.6
+        },
+        {
+          "area4": 59.7,
+          "area8": 91.8,
+          "dem4": 64.5,
+          "dem8": 92.6
+        },
+        {
+          "area4": 60.3,
+          "area8": 93.1,
+          "dem4": 65.2,
+          "dem8": 93.5
+        },
+        {
+          "area4": 60.9,
+          "area8": 93.5,
+          "dem4": 65.8,
+          "dem8": 93.9
+        },
+        {
+          "area4": 61.7,
+          "area8": 93.5,
+          "dem4": 66.5,
+          "dem8": 93.9
+        }
+      ],
+      "buildout_default": 4,
+      "buildout_max": 8
     },
     "aid": {
       "funded": {
@@ -64,7 +123,65 @@
         "area8": 93.8,
         "dem4": 64.6,
         "dem8": 94.1
-      }
+      },
+      "buildout_seq": [
+        {
+          "area4": 56.2,
+          "area8": 93.2,
+          "dem4": 61.0,
+          "dem8": 93.6
+        },
+        {
+          "area4": 57.3,
+          "area8": 93.4,
+          "dem4": 62.0,
+          "dem8": 93.8
+        },
+        {
+          "area4": 58.1,
+          "area8": 93.6,
+          "dem4": 63.0,
+          "dem8": 94.1
+        },
+        {
+          "area4": 58.8,
+          "area8": 93.6,
+          "dem4": 63.8,
+          "dem8": 94.1
+        },
+        {
+          "area4": 60.0,
+          "area8": 93.8,
+          "dem4": 64.6,
+          "dem8": 94.1
+        },
+        {
+          "area4": 60.7,
+          "area8": 94.3,
+          "dem4": 65.3,
+          "dem8": 94.6
+        },
+        {
+          "area4": 61.4,
+          "area8": 94.3,
+          "dem4": 65.9,
+          "dem8": 94.6
+        },
+        {
+          "area4": 62.1,
+          "area8": 94.3,
+          "dem4": 66.5,
+          "dem8": 94.6
+        },
+        {
+          "area4": 62.8,
+          "area8": 94.3,
+          "dem4": 67.0,
+          "dem8": 94.6
+        }
+      ],
+      "buildout_default": 4,
+      "buildout_max": 8
     }
   },
   "total_demand": 2620.8,
