@@ -494,7 +494,7 @@ function wireUI(){
   const setLayers=open=>{lp.classList.toggle("open",open);lb.classList.toggle("active",open);};
   lb.addEventListener("click",()=>setLayers(!lp.classList.contains("open")));
   document.getElementById("layersClose").addEventListener("click",()=>setLayers(false));
-  if(!window.matchMedia("(max-width:759px)").matches) setLayers(true);   // open by default on desktop
+  if(window.matchMedia("(min-width:1500px)").matches) setLayers(true);   // auto-open only on wide screens; smaller/low-res screens keep the map clear
   // panel tabs
   document.querySelectorAll(".ptab").forEach(t=>t.addEventListener("click",()=>{
     document.querySelectorAll(".ptab").forEach(x=>x.classList.remove("active"));
